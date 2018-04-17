@@ -293,8 +293,50 @@ tupleResult.metaData.parterTraceId
 
 
 // 서브스크립팅 구현
+class MovieList {
+  private var tracks = ["The Godfather", "The Dark Knight", "Pulp Fiction"]
+  subscript(index: Int) -> String {
+    get {
+      return self.tracks[index]
+    }
+    set {
+      self.tracks[index] = newValue
+    }
+  }
+}
 
+struct Person {
+  var firstName: String
+  var lastName: String
+  init(firstName: String, lastName: String) {
+    self.firstName = firstName
+    self.lastName = lastName
+  }
+}
 
+class Address {
+  var street: String = ""
+  var city: String = ""
+  var state: String = ""
+  var zipcode: String = ""
+  init(street: String, city: String, state: String, zipcode: String) {
+    self.street = street
+    self.city = city
+    self.state = state
+    self.zipcode = zipcode
+  }
+}
+
+let person = Person(firstName: "John", lastName: "Smith")
+
+// person.firstName = "Erik" 컴파일 애러
+
+let adress = Address(street: "1 Infinite Loop", city: "Cupertino",
+                     state: "CA", zipcode: "95014")
+
+adress.city = "19111 Pruneridge Avenue"
+
+//adress = Address(street: "1", city: "1", state: "1", zipcode: "1")
 
 
 
