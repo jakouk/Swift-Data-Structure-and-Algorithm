@@ -336,13 +336,71 @@ let adress = Address(street: "1 Infinite Loop", city: "Cupertino",
 
 adress.city = "19111 Pruneridge Avenue"
 
-//adress = Address(street: "1", city: "1", state: "1", zipcode: "1")
+// adress = Address(street: "1", city: "1", state: "1", zipcode: "1")
+
+/*
+  Objective-C의 명령 실행 체계는 메시지는 리시버, 셀렉터, 파라미터등의 요소로 구성된다.
+ 메시지로 모델을 전달할 때는 보통의 컴파일 시점의 바인딩이 아닌 동적 바인딩 기법을 사용한다.
+ 스위프트는 객체를 생성할 때 일관성을 유지하기 위해 모든 클래스 팩토리 메소드를 편의 메소드로 바꿔서 임포트한다.
+ 
+ 스위프트에서
+ NSString initWithFormat -> public convenience init(format: NSString _ args: CVarArgType...)
+ 
+ Objective-C 에서 스위프트 객체를 사용하려면 NSObject를 상속하거나 Objective-C의 다른 클래스를 상속해야한다.
+ 
+ NSObject를 상속하지 않고도 @objc 속성을 사용해서 해당 메소드에 접근할 수 있다.
+ 
+ @objc(ObjCMovieList)
+ class MovieList: NSObject {
+ }
+ */
+
+//import AppKit
+//
+//public struct Particle {
+//  private var statistics: String
+//  private var image: NSImage
+//}
+//
+//extension Particle {
+//  //  초기화 객체
+//  init?(name: String, symbol: String, statistics: String, imageName: String) {
+//    self.name
+//  }
+//}
+// 스위프트에서 여러분이 만든 타입에 실패 가능 초기화 기능을 사용해서는 안되는 이유를 보여준다.
 
 
+// SOLID 원칙을 준수해야한다. SOLID는 객체지향 디자인과 프로그래밍을 설명하기 위한 다섯가지 원칙이다.
+
+/*
+ 1. 단일 책임 원칙: 하나의 클래스는 오직 단 하나의 책임만 부담해야한다.
+ 2. 개방과 폐쇄의 원칙: 소프트웨어는 확장이라는 측면에서는 개방돼 있어야 하고, 수정이라는 측면에서는 폐쇄돼 있어야 한다.
+ 3. 리스코프 대체 원칙: 특정 클래스에서 분화돼 나온 클래스는 원본 클래스로 대체 가능해야 한다.
+ 4. 인터페이스 세분화 원칙: 개별적인 목적에 대응할 수 있는 여러 개의 인터페이스가 일반적인 목적에 대응할 수 있는 하나의 인터페이스 보다 낫다.
+ 5. 의존선 도치의 원치: 구체화가 아닌 추상화를 중시한다.
+ 
+ 애플의 명령 전달 기법
+ 
+ 1. 동적 명령 기법 ( 다이나믹 디스패치 )
+ 2. vtable 기법
+ 3. 정적 디스패치 ( statical dispatch )
+ 
+  스위프트는 기본적으로 vtable 기법을 사용하고 @objc 키워드를 추가하면 강제로 다이나믹 디스패치가 적용된다.
+ ( 완벽하게 보장되는 것은 아니다 )
+ */
 
 
+// 프로토콜
 
+/*
+  프로토콜 프로퍼티를 정의할 때는 get 속성인지, set 속성인지 혹은 둘다 인지 구체적으로 밝혀야 한다.
+  메소드에서 구조체의 멤버변수가 변경될 수 있으면 메소드 선언시 mutating 키워드를 추가해야 한다.
+ */
 
-
+/*
+  리터럴 문법 var = myIntArray = [Int]()
+  ExpressibleByArrayLiteral 프로콜을 이용해서 클래스를 초기화할때 리터럴 문법을 사용하게 만들수 있다.
+ */
 
 
