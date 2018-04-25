@@ -25,6 +25,10 @@ import UIKit
 public struct Stack<T> {
   private var elements = [T]()
   public init() {}
+  public init<S: Sequence>(_ s: S) where S.Iterator.Element == T {
+    self.elements = Array(s.reversed())
+  }
+  
   public mutating func pop() -> T? {
     return self.elements.popLast()
   }
@@ -69,14 +73,35 @@ extension Stack: CustomStringConvertible, CustomDebugStringConvertible {
   }
 }
 
-//extension Stack: ExpressibleByArrayLiteral {
-//  public init(arrayLiteral elements: T...) {
-//    self.init(elements)
+extension Stack: ExpressibleByArrayLiteral {
+  public init(arrayLiteral elements: T...) {
+    self.init(elements)
+  }
+}
+
+public struct ArrayIterator<T>: IteratorProtocol {
+  var currentElement: [T]
+  init(elements: [T]) {
+    self.currentElement = elements
+  }
+  
+  mutating public func next() -> T? {
+    if (!self.currentElement.isEmpty) {
+      return self.currentElement.popLast()
+    }
+    return nil
+  }
+}
+
+extension Stack: Sequence {
+//  public func makeIterator() -> ArrayIterator<T> {
+//    return ArrayIterator<T>(elements: self.elements)
 //  }
-//}
-
-
-
+  
+  public func makeIterator() -> AnyIterator<T> {
+    return AnyIterator(IndexingIterator(_elements: self.elements.lazy.reversed()))
+  }
+}
 
 
 
