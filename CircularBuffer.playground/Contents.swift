@@ -30,7 +30,7 @@ import UIKit
  개발할때 사용하게 돤다.
  */
 
-enum CircularBufferOperation {
+public enum CircularBufferOperation {
   case Ignore, Overwrite
 }
 
@@ -45,18 +45,22 @@ public struct CircularBuffer<T> {
   private var internalCount: Int = 0
   private var overwriteOperation: CircularBufferOperation = CircularBufferOperation.Overwrite
   
-  // 빈 CircularBuffer 구조를 생성
+  /// 빈 CircularBuffer 구조를 생성
   public init() {
     data = [T]()
     data.reserveCapacity(Constants.defaultBufferCapacity)
   }
   
+  /// `count` 프로퍼티의 CircularBuffer를 생성
+  /// - 주의: `count` 만큼 2를 거듭제곱하지 않은 경우,
+  /// 그에 가장 가까운 수만큼 2를 거듭제곱함
   public init(_ count: Int, overwriteOperation: CircularBufferOperation = .Overwrite) {
     var  capacity = count
     if (capacity < 1) {
       capacity = Constants.defaultBufferCapacity
     }
     
+    /// `count` 만큼 2를 거듭제곱으로 함
     if ((capacity & (~capacity + 1)) != capacity) {
       var b = 1
       while b < capacity {
@@ -70,11 +74,16 @@ public struct CircularBuffer<T> {
     self.overwriteOperation = overwriteOperation
   }
   
+  /// 시퀀스에서 CircularBuffer를 생성
   public init<S: Sequence>(_ elements: S, size: Int) where S.Iterator.Element == T {
     self.init(size)
     elements.forEach({ push(element: $0) })
   }
   
+  /// 버퍼에서 첫번째 요소를 삭제한 뒤 반환
+  /// - 반환값 타임:
+  /// - 버퍼가 비어있지 않은 경우, 첫번쨰 요소의 타입은 `T`
+  /// - 버퍼가 비어있는 경우, `nil`을 반환.
   public mutating func pop() -> T? {
     if (isEmpty()) {
       return nil
@@ -86,10 +95,14 @@ public struct CircularBuffer<T> {
     return el
   }
   
+  /// 버퍼에서 첫 번째 요소를 삭제하지 않고 반환
+  /// - 반환값의 타입: 첫번째 요소의 타입은 `T`
+  
   public func peek() -> T? {
     if (isEmpty()) {
       return nil
     }
+    return data[head]
   }
   
   public mutating func push(element: T) {
@@ -144,4 +157,17 @@ public struct CircularBuffer<T> {
     return (pointer + 1) & (data.capacity - 1)
   }
   
+  private func decementPointer(pointer: Int) -> Int {
+    return (pointer - 1) & (data.capacity - 1)
+  }
+  
+  private func convertLogicalToRealIndex(logincalIndex:Int) -> Int {
+    return (head + logincalIndex) & (data.capacity - 1)
+  }
+  
+  private func checkIndex(index: Int) {
+    if index < 0 || index > count {
+      fatalError("Index out of range")
+    }
+  }
 }
