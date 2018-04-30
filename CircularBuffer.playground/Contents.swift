@@ -97,7 +97,6 @@ public struct CircularBuffer<T> {
   
   /// 버퍼에서 첫 번째 요소를 삭제하지 않고 반환
   /// - 반환값의 타입: 첫번째 요소의 타입은 `T`
-  
   public func peek() -> T? {
     if (isEmpty()) {
       return nil
@@ -105,6 +104,16 @@ public struct CircularBuffer<T> {
     return data[head]
   }
   
+  /// `element` 를 버퍼 맨 뒤에 추가
+  /// 기본 메소드인 `overwriteOperation`이
+  /// `CircularBufferOperation.Overwrite`이 되면,
+  /// 버퍼가 가득 찬, 가장 오래된 요소를 덮어쓰기 한다.
+  
+  /// 만일 `overwriteOperation`이
+  /// `CircularBufferOperation.Ignore` 가 되면,
+  /// 기존의 요소가 삭제될 때까지 버퍼에 새로운 요소가 추가하지 않는다.
+  /// - 복잡성: O(1)
+  /// - 파라미터 요소: `T` 타입인 요소
   public mutating func push(element: T) {
     if (isEmpty()) {
       switch overwriteOperation {
@@ -125,6 +134,7 @@ public struct CircularBuffer<T> {
     internalCount += 1
   }
   
+  /// 버퍼를 빈 상태로 재설정
   public mutating func clear() {
     head = 0
     tail = 0
@@ -132,10 +142,13 @@ public struct CircularBuffer<T> {
     data.removeAll(keepingCapacity: true)
   }
   
+  /// 버퍼 내 요소의 수를 반환
+  /// `count`는 버퍼 내 요소의 수임
   public  var count: Int {
     return internalCount
   }
   
+  /// 버퍼의 용량을 반환
   public var capacity: Int {
     get {
       return data.capacity
@@ -145,26 +158,37 @@ public struct CircularBuffer<T> {
     }
   }
   
+  /// 버퍼가 가득 찼는지 확인
+  /// - 반환값: 버퍼가 가득 찬 경우 `True`, 그렁지 않은 경우 `False`를 반환
   public func isFull() -> Bool {
     return count == data.capacity
   }
   
+  /// 버퍼가 비어있는지 확인
+  /// - 반환값: 버퍼가 빈 경우 `True`, 그렇지 않은 경우 `False`를 반환
   public func isEmpty() -> Bool {
     return (count < 1)
   }
   
+  /// 포인터 값을 1씩 증가시킴
+  /// - 주의: 이메소드는 증가된 값이 배열의 마지막 요소를 넘을 경우를 대비
   private func incrementPointer(pointer: Int) -> Int {
     return (pointer + 1) & (data.capacity - 1)
   }
   
+  /// 포인터 닶을 1씩 감소시킴
+  /// - 주의: 이 메소드는 감소된 값이 배열의 첫 번째 요소에 미치지 못할 경우를 대비
   private func decementPointer(pointer: Int) -> Int {
     return (pointer - 1) & (data.capacity - 1)
   }
   
+  /// 서브스크립트 작성을 위해 로지컬 인덱스 값을
+  /// 현재 내부 배열 요소의 인덱스 값으로 변환함
   private func convertLogicalToRealIndex(logincalIndex:Int) -> Int {
     return (head + logincalIndex) & (data.capacity - 1)
   }
   
+  /// `index`가 지정 범위 내에 있는지 확인 
   private func checkIndex(index: Int) {
     if index < 0 || index > count {
       fatalError("Index out of range")
