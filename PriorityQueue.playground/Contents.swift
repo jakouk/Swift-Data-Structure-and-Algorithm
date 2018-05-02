@@ -32,7 +32,7 @@ import UIKit
  프림 알고리즘 ( prim alforithm ): 가중치가 적용된 비지도학습 그래프에서 폭이 최소인 트리를 찾는데 활용된다.
  */
 
-/// 자체 주석 : PriorityQueuen 자체가 힙구조로 만들어져 있다.
+/// 자체 주석 : PriorityQueuen 자체가 힙구조로 만들어져 있다. -> 힙구조란 기본적으로 2진 트리 
 public struct PriorityQueue<T: Comparable> {
   private var heap = [T]()
   private let ordered: (T, T) -> Bool
