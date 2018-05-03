@@ -67,3 +67,71 @@ private class Node<T> {
     self.data = data
   }
 }
+
+extension StackList: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    var d = "["
+    var lastNode = head
+    while lastNode != nil {
+      d = d + "\(lastNode?.data)"
+      lastNode = lastNode?.next
+      if lastNode != nil {
+        d = d + ","
+      }
+    }
+    d = d + "]"
+    return d
+  }
+  
+  public var debugDescription: String {
+    var d = "["
+    var lastNode = head
+    while lastNode != nil {
+      d = d + "\(lastNode?.data)"
+      lastNode = lastNode?.next
+      if lastNode != nil {
+        d = d + ","
+      }
+    }
+    d = d + "]"
+    return d
+  }
+}
+
+extension StackList: ExpressibleByArrayLiteral {
+  public init(arrayLiteral elements: T...) {
+    for el in elements {
+      push(element: el)
+    }
+  }
+}
+
+public struct NodeIterator<T>: IteratorProtocol {
+  public typealias Element = T
+  private var head: Node<Element>?
+  fileprivate init(head: Node<T>?) {
+    self.head = head
+  }
+  
+  mutating public func next() -> T? {
+    if (head != nil ) {
+      let item = head!.data
+      head = head!.next
+      return item
+    }
+    return nil
+  }
+}
+
+extension StackList: Sequence {
+  public typealias Iterator = NodeIterator<T>
+  public func makeIterator() -> NodeIterator<T> {
+    return NodeIterator<T>(head: head)
+  }
+  
+  public init<S: Sequence>(_ s: S) where S.Iterator.Element == T {
+    for el in s {
+      push(element: el)
+    }
+  }
+}
