@@ -25,7 +25,7 @@ func partition<T: Comparable>(_ list: inout [T], lo: Int, hi: Int) -> Int {
   return i
 }
 
-var list = [3, 5, 1, 2 ,7, 9, 4]
+var list = [ 9, 4, 8, 7, 6, 5, 3, 2, 1]
 
 print(quickSort(&list, lo: 0, hi: 6))
 
