@@ -71,7 +71,52 @@ public class BinaryTreeNode<T:Comparable> {
       }
     }
   }
+  
+  /*
+   순회 방식
+   
+   인오더 트리 워크
+    말 그래로 오름차순으로 정렬된 트리 노드의 값이 목록으로 반환된다.
+   
+   먼저 좌측 서브트리로 시작해서 루트 노드값을 확인한 뒤 우측 서브트리를 순회한다.
+   이진 검색 트리 혹은 BST의 노드값 크기는 다음 순서가 된다.
+   
+   좌측값 < 루트 노드값 < 우측 값
+  */
+  public class func traverseInOrder(node: BinaryTreeNode?) {
+    guard let node = node else {
+      return
+    }
+    BinaryTreeNode.traverseInOrder(node: node.leftChild)
+    print(node.value)
+    BinaryTreeNode.traverseInOrder(node: node.rightChild)
+  }
+  
+  public class func traversePreOrder(node: BinaryTreeNode?) {
+    guard let node = node else {
+      return
+    }
+    print(node.value)
+    BinaryTreeNode.traversePreOrder(node: node.leftChild)
+    BinaryTreeNode.traversePreOrder(node: node.rightChild)
+  }
+  
+  public class func traversePostOrder(node: BinaryTreeNode?) {
+    guard let node = node else {
+      return
+    }
+    BinaryTreeNode.traversePostOrder(node: node.leftChild)
+    BinaryTreeNode.traversePostOrder(node: node.rightChild)
+    print(node.value)
+  }
 }
 
+let rootNode = BinaryTreeNode(value: 10)
+rootNode.inserNodeFromRoot(value: 20)
+rootNode.inserNodeFromRoot(value: 5)
+rootNode.inserNodeFromRoot(value: 21)
+rootNode.inserNodeFromRoot(value: 8)
+rootNode.inserNodeFromRoot(value: 4)
 
+BinaryTreeNode.traverseInOrder(node: rootNode)
 
