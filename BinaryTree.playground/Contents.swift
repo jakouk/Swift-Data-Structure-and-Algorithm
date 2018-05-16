@@ -109,6 +109,129 @@ public class BinaryTreeNode<T:Comparable> {
     BinaryTreeNode.traversePostOrder(node: node.rightChild)
     print(node.value)
   }
+  
+  // 검색
+  public func search(value: T) -> BinaryTreeNode? {
+    // 키 값을 찾은 경우
+    if value == self.value {
+      return self
+    }
+    
+    if value < self.value {
+      guard let left = leftChild else {
+        return nil
+      }
+      return left.search(value: value)
+      
+    } else {
+      guard let right = rightChild else {
+        return nil
+      }
+      return right.search(value: value)
+    }
+  }
+  
+  // 노드 삭제
+  public func delete() {
+    if let left = leftChild {
+      if let _ = rightChild {
+        self.exchangeWithSuccessor()
+      } else {
+        self.connectParentTo(child: left)
+      }
+    } else if let right = rightChild {
+      self.connectParentTo(child: right)
+    } else {
+      self.connectParentTo(child: nil)
+    }
+    self.parent = nil
+    self.leftChild = nil
+    self.rightChild = nil
+  }
+  
+  private func exchangeWithSuccessor() {
+    guard let right = self.rightChild, let left = self.leftChild else {
+       return
+    }
+    let successor = right.minimum()
+    successor.delete()
+    
+    successor.leftChild = left
+    left.parent = successor
+    
+    if right !== successor {
+      successor.rightChild = right
+      right.parent = successor
+    } else {
+      successor.rightChild = nil
+      self.connectParentTo(child: successor)
+    }
+  }
+  
+  private func connectParentTo(child: BinaryTreeNode?) {
+    guard let parent = self.parent else {
+      child?.parent = self.parent
+      return
+    }
+    if parent.leftChild === self {
+      parent.leftChild = child
+      child?.parent = parent
+    } else if parent.rightChild === self {
+      parent.rightChild = child
+      child?.parent = parent
+    }
+  }
+  
+  public func minimumValue() -> T {
+    if let left = leftChild {
+      return left.minimumValue()
+    } else {
+      return value
+    }
+  }
+  
+  public func maximumValue() -> T {
+    if let right = rightChild {
+      return right.maximumValue()
+    } else {
+      return value
+    }
+  }
+  
+  public func minimum() -> BinaryTreeNode {
+    if let left = leftChild {
+      return left.minimum()
+    } else {
+      return self
+    }
+  }
+  
+  public func maximum() -> BinaryTreeNode {
+    if let right = rightChild {
+      return right.maximum()
+    } else {
+      return self
+    }
+  }
+  
+  public func height() -> Int {
+    if leftChild == nil && rightChild == nil {
+      return 0
+    }
+    return 1 + max(leftChild?.height() ?? 0, rightChild?.height() ?? 0)
+  }
+  
+  public func depth() -> Int {
+    guard var node = parent else {
+      return 0
+    }
+    var depth = 1
+    while let parent = node.parent {
+      depth = depth + 1
+      node = parent
+    }
+    return depth
+  }
 }
 
 let rootNode = BinaryTreeNode(value: 10)
@@ -119,4 +242,11 @@ rootNode.inserNodeFromRoot(value: 8)
 rootNode.inserNodeFromRoot(value: 4)
 
 BinaryTreeNode.traverseInOrder(node: rootNode)
+
+rootNode.search(value: 6)
+rootNode.search(value: 5)?.value
+
+rootNode.leftChild?.delete()
+BinaryTreeNode.traverseInOrder(node: rootNode)
+
 
