@@ -54,4 +54,30 @@ public class RedBlackTreeNode<T:Comparable> {
       printTree(nodes: children)
     }
   }
+  
+  public func rotateRight() {
+    guard let parent = parent else {
+      return
+    }
+    
+    let grandParent = parent.parent
+    let newRightChildsLeftChild = self.rightChild
+    var wasLeftChild = false
+    if parent === grandParent?.leftChild {
+      wasLeftChild = true
+    }
+    
+    self.rightChild = parent
+    self.rightChild?.parent = self
+    
+    self.parent = grandParent
+    if wasLeftChild {
+      grandParent?.leftChild = self
+    } else {
+      grandParent?.rightChild = self
+    }
+    
+    self.rightChild?.leftChild = newRightChildsLeftChild
+    self.rightChild?.leftChild?.parent = self.rightChild
+  }
 }
