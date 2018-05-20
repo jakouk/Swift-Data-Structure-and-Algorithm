@@ -55,6 +55,7 @@ public class RedBlackTreeNode<T:Comparable> {
     }
   }
   
+  // 오른쪽 회전
   public func rotateRight() {
     guard let parent = parent else {
       return
@@ -79,5 +80,78 @@ public class RedBlackTreeNode<T:Comparable> {
     
     self.rightChild?.leftChild = newRightChildsLeftChild
     self.rightChild?.leftChild?.parent = self.rightChild
+  }
+  
+  // 왼쪽 회전
+  public func rotationLeft() {
+    guard let parent = parent else {
+      return
+    }
+    
+    let grandParant = parent.parent
+    let newLeftChildsRightChild = self.leftChild
+    var wasLeftChild = false
+    if parent === grandParant?.leftChild {
+      wasLeftChild = true
+    }
+    
+    self.leftChild = parent
+    self.leftChild?.parent = self
+    
+    self.parent = grandParant
+    if wasLeftChild {
+      grandParant?.leftChild = self
+    } else {
+      grandParant?.rightChild = self
+    }
+    
+    self.leftChild?.rightChild = newLeftChildsRightChild
+    self.leftChild?.rightChild?.parent = self.leftChild
+  }
+  
+  public func insertNodeFromRoot(value: T) {
+    // 이진 검색 트리의 속성을 유지하기 위해
+    
+    if let _ = self.parent {
+      print("You can only add new nodes from the root node of the tree")
+      return
+    }
+    self.addNode(value: value)
+  }
+  
+  private func addNode(value: T) {
+    if value < self.value {
+      if let leftChild = leftChild {
+        leftChild.addNode(value: value)
+      } else {
+        let newNode = RedBlackTreeNode(value: value)
+        newNode.parent = self
+        newNode.color = RedBlackTreeColor.red
+        leftChild = newNode
+        insertionReviewStep1(node: newNode)
+      }
+    } else {
+      if let rightChild = rightChild {
+        rightChild.addNode(value: value)
+      } else {
+        let newNode = RedBlackTreeNode(value: value)
+        newNode.parent = self
+        newNode.color = RedBlackTreeColor.red
+        rightChild = newNode
+        insertionReviewStep1(node: newNode)
+      }
+    }
+  }
+  
+  private func insertionReviewStep1(node: RedBlackTreeNode) {
+    if let _ = node.parent {
+      insertionReviewStep2(node: node)
+    } else {
+      node.color = .black
+    }
+  }
+  
+  private func insertionReviewStep2(node: RedBlackTreeNode) {
+    
   }
 }
