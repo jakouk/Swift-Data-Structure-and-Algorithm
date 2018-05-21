@@ -39,6 +39,17 @@ public class RedBlackTreeNode<T:Comparable> {
     }
   }
   
+  public func uncleNode() -> RedBlackTreeNode? {
+    guard let grandParent = self.grandParentNode() else {
+      return nil
+    }
+    if parent === grandParent.leftChild {
+      return grandParent.rightChild
+    } else {
+      return grandParent.leftChild
+    }
+  }
+  
   public static func printTree(nodes:[RedBlackTreeNode]) {
     var children:[RedBlackTreeNode] = Array()
     for node:RedBlackTreeNode in nodes {
@@ -152,6 +163,53 @@ public class RedBlackTreeNode<T:Comparable> {
   }
   
   private func insertionReviewStep2(node: RedBlackTreeNode) {
-    
+    if node.parent?.color == .black {
+      return
+    }
+    insertionReviewStep3(node: node)
   }
+  
+  private func insertionReviewStep3(node: RedBlackTreeNode) {
+    if let uncle = node.uncleNode() {
+      if uncle.color == .red {
+        node.parent?.color = .black
+        uncle.color = .black
+        if let grandParnet = node.grandParentNode() {
+          grandParnet.color = .red
+          insertionReviewStep1(node: grandParnet)
+        }
+        return
+      }
+    }
+    insertionReviewStep4(node: node)
+  }
+  
+  private func insertionReviewStep4(node: RedBlackTreeNode) {
+    var node = node
+    guard let grandParent = node.grandParentNode() else {
+      return
+    }
+    if node === node.parent?.rightChild && node.parent === grandParent.leftChild {
+      node.parent?.rotationLeft()
+      node = node.leftChild!
+    } else if node === node.parent?.leftChild && node.parent === grandParent.rightChild {
+      node.parent?.rotateRight()
+      node = node.rightChild!
+    }
+    insertionReviewStep5(node: node)
+  }
+  
+  private func insertionReviewStep5(node: RedBlackTreeNode) {
+    guard let grandParent = node.grandParentNode() else {
+      return
+    }
+    node.parent?.color = .black
+    grandParent.color = .red
+    if node === node.parent?.leftChild {
+      grandParent.rotateRight()
+    } else {
+      grandParent.rotationLeft()
+    }
+  }
+  
 }
