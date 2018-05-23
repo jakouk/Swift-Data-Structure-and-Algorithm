@@ -32,6 +32,13 @@ import UIKit
  하지만 삽입과 삭제 작업은 레드블랙 트리보다 느리며 이는 AVL 트리가 균형 조건에 따라 데이터 구조의 균형을
  잡는 작업을 수행해야 하기 떄문이다.
  
+ 
+ AVL 트리 회전
+ 
+ 1. 좌측 단순회전
+ 2. 우측 단순회전
+ 3. 좌우 이중 회전
+ 4. 우좌 이중 회전
  */
 
 public class AVLTreeNode<T: Comparable> {
@@ -54,4 +61,50 @@ public class AVLTreeNode<T: Comparable> {
     self.blanceFactor = 0
   }
   
+ 
+  // 1단계: 회전 -> 2단계: 높이 ( 균형 )
+  public func rotateLeft() -> AVLTreeNode {
+    guard let parent = parent else {
+      return self
+    }
+    
+    // 1 단계: 회전
+    // 0. 나중에 사용할 수 있도록 임시 참조값을 저장
+    let grandParent = parent.parent
+    let newLeftChildsRightChild = self.leftChild
+    var wasLeftChild = false
+    
+    if parent === grandParent?.leftChild {
+      wasLeftChild = true
+    }
+    
+    //1. 기존의 부모 노드가 새로운 좌측 자식 노드가 됨
+    self.leftChild = parent
+    self.leftChild?.parent = self
+    
+    //2. 기존의 조부 노드가 새로운 부모 노드가 됨
+    self.parent = grandParent
+    if wasLeftChild {
+      grandParent?.leftChild = self
+    } else {
+      grandParent?.rightChild = self
+    }
+    
+    ///3. 기존의 좌측 자신노드가 새로운 좌측 자식의 우측 자신 노드가 됨
+    self.leftChild?.rightChild = newLeftChildsRightChild
+    self.leftChild?.rightChild?.parent = self.leftChild
+    
+    // 2단계: 높이 업데이트
+    if self.blanceFactor == 0 {
+      self.blanceFactor = -1
+      self.leftChild?.blanceFactor = 1
+    } else {
+      self.blanceFactor = 0
+      self.leftChild?.blanceFactor = 0
+    }
+    return self
+  }
+  
 }
+
+
