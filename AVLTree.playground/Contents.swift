@@ -105,6 +105,49 @@ public class AVLTreeNode<T: Comparable> {
     return self
   }
   
+  
+  // 단순 우측 회전 메소드 구현
+  public func rotateRight() -> AVLTreeNode {
+    guard let parent = parent else {
+      return self
+    }
+    
+    // 1 단계: 회전
+    // 0. 나중에 사용할 수 있도록 임시 참조값을 저장
+    let grandParent = parent.parent
+    let newRightChildsLeftChild = self.rightChild
+    var wasLeftChild = false
+    if parent === grandParent?.leftChild {
+      wasLeftChild = true
+    }
+    
+    //1. 기존의 부모 노드가 새로운 우측 자식 노드가 됨
+    self.rightChild = parent
+    self.rightChild?.parent = self
+    
+    //2. 기존의 조부 노드가 새로운 부모 노드가 됨
+    self.parent = grandParent
+    if wasLeftChild {
+      grandParent?.leftChild = self
+    } else {
+      grandParent?.rightChild = self
+    }
+    
+    //3. 기존의 우측 자식 노드가 새로운 우츠 자식의 좌측 자식 노드가 됨
+    self.rightChild?.leftChild = newRightChildsLeftChild
+    self.rightChild?.leftChild?.parent = self.rightChild
+    
+    // 2 단계: 높이 업데이트
+    if self.blanceFactor == 0 {
+      self.blanceFactor = 1
+      self.leftChild?.blanceFactor = -1
+    } else {
+      self.blanceFactor = 0
+      self.leftChild?.blanceFactor = 0
+    }
+    return self
+  }
+  
 }
 
 
