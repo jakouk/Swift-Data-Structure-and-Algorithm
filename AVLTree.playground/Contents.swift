@@ -46,7 +46,7 @@ public class AVLTreeNode<T: Comparable> {
   public var leftChild: AVLTreeNode?
   public var rightChild: AVLTreeNode?
   public weak var parent: AVLTreeNode?
-  public var blanceFactor: Int = 0
+  public var balanceFactor: Int = 0
   
   // 초기화
   public convenience init(value: T) {
@@ -58,7 +58,7 @@ public class AVLTreeNode<T: Comparable> {
     self.leftChild = left
     self.rightChild = right
     self.parent = parent
-    self.blanceFactor = 0
+    self.balanceFactor = 0
   }
   
  
@@ -95,12 +95,12 @@ public class AVLTreeNode<T: Comparable> {
     self.leftChild?.rightChild?.parent = self.leftChild
     
     // 2단계: 높이 업데이트
-    if self.blanceFactor == 0 {
-      self.blanceFactor = -1
-      self.leftChild?.blanceFactor = 1
+    if self.balanceFactor == 0 {
+      self.balanceFactor = -1
+      self.leftChild?.balanceFactor = 1
     } else {
-      self.blanceFactor = 0
-      self.leftChild?.blanceFactor = 0
+      self.balanceFactor = 0
+      self.leftChild?.balanceFactor = 0
     }
     return self
   }
@@ -138,16 +138,39 @@ public class AVLTreeNode<T: Comparable> {
     self.rightChild?.leftChild?.parent = self.rightChild
     
     // 2 단계: 높이 업데이트
-    if self.blanceFactor == 0 {
-      self.blanceFactor = 1
-      self.leftChild?.blanceFactor = -1
+    if self.balanceFactor == 0 {
+      self.balanceFactor = 1
+      self.leftChild?.balanceFactor = -1
     } else {
-      self.blanceFactor = 0
-      self.leftChild?.blanceFactor = 0
+      self.balanceFactor = 0
+      self.leftChild?.balanceFactor = 0
     }
     return self
   }
   
-}
+  // 우-좌 이중 회전 메소드의 구현
+  public func rotateRightLeft() -> AVLTreeNode {
+    // 1: 이중 회전
+    _ = self.rotateRight()
+    _ = self.rotateLeft()
+    
+    // 2: 균형 요소 업데이트
+    if self.balanceFactor > 0 {
+      self.leftChild?.balanceFactor = -1
+      self.rightChild?.balanceFactor = 0
+    } else if self.balanceFactor == 0 {
+      self.leftChild?.balanceFactor = 0
+      self.rightChild?.balanceFactor = 0
+    } else {
+      self.leftChild?.balanceFactor = 0
+      self.rightChild?.balanceFactor = 1
+    }
+    self.balanceFactor = 0
+    return self
+  }
+  
+  // 좌-우 이중 회전 메소드의 구현
 
+  
+}
 
