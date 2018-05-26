@@ -172,5 +172,64 @@ public class AVLTreeNode<T: Comparable> {
   // 좌-우 이중 회전 메소드의 구현
 
   
+  public func insertNodeFromRoot(value: T) {
+    // 진 검색 트리 속성을 유지하기 위해 루트
+    if let _ = self.parent {
+      
+      // 만일 부모가 있다면 루트 노드가 아님
+      print("You can only add new nodes from the root node of the tree")
+      return
+    }
+    self.addNode(value:value)
+  }
+  
+  private func addNode(value: T) {
+    if value < self.value {
+      // 삽입할 노드의 값은 루트 노드 값보다 작은경우
+      // 좌측 서브트리에 삽입해야함
+      
+      // 좌측 서브트리에 삽입하되, 만일 좌측 서브트리가 존재하지
+      // 않으면 새로운 노드를 생성하고 좌측 자식 노드로 삼음
+      if let leftChild = leftChild {
+        leftChild.addNode(value: value)
+      } else {
+        let newNode = AVLTreeNode(value: value)
+        newNode.parent = self
+        leftChild = newNode
+      }
+    } else {
+      // 삽입할 노드의 값은 루트 노드 값보다 큰 경우,
+      // 우측 서브트리에 삽입해야 함
+      
+      // 우측 서브트리에 삽입하되, 우측 서브트리가 존재하지 않으면
+      // 새로운 노드를 생성하고 우측 자식 노드로 삼음
+      
+      if let rightChild = rightChild {
+        rightChild.addNode(value: value)
+      } else {
+        let newNode = AVLTreeNode(value: value)
+        newNode.parent = self
+        rightChild = newNode
+      }
+    }
+  }
+  
+  // 트리의 상단부터 하단에 이르는 모든 레이어의 노드닶과 균형 요소를 출력
+  public static func printTree(nodes:[AVLTreeNode]) {
+    var children: [AVLTreeNode] = Array()
+    for node: AVLTreeNode in nodes {
+      print("\(node.value)" + " " + "\(node.balanceFactor)")
+      if let leftChild = node.leftChild {
+        children.append(leftChild)
+      }
+      if let rightChild = node.rightChild {
+        children.append(rightChild)
+      }
+    }
+    if children.count > 0 {
+      printTree(nodes: children)
+    }
+  }
+  
 }
 
