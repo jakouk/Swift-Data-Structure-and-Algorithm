@@ -36,3 +36,34 @@ import UIKit
  입력하고, 그렇지 않다면 0을 입력한다. 
  
  */
+
+public struct Vertex<T: Equatable>: Equatable {
+  public var data: T
+  public let index: Int
+  
+  public static func == (lhs: Vertex<T>, rhs: Vertex<T>) -> Bool {
+    guard lhs.data == rhs.data else {
+      return false
+    }
+    return true
+  }
+}
+
+public struct Edge<T: Equatable>: Equatable {
+  public let from: Vertex<T>
+  public let to: Vertex<T>
+  
+  public static func == (lhs: Edge<T>, rhs: Edge<T>) -> Bool {
+    guard lhs.from == rhs.from else {
+      return false
+    }
+    
+    guard lhs.to == rhs.to else {
+      return false
+    }
+    
+    return true
+  }
+}
+
+
