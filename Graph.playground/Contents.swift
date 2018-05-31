@@ -37,7 +37,7 @@ import UIKit
  
  */
 
-public struct Vertex<T: Equatable>: Equatable {
+public struct Vertex<T: Equatable & Hashable>: Equatable {
   public var data: T
   public let index: Int
   
@@ -49,7 +49,15 @@ public struct Vertex<T: Equatable>: Equatable {
   }
 }
 
-public struct Edge<T: Equatable>: Equatable {
+extension Vertex: Hashable {
+  public var hashValue: Int {
+    get {
+      return "\(index)".hashValue
+    }
+  }
+}
+
+public struct Edge<T: Equatable & Hashable>: Equatable {
   public let from: Vertex<T>
   public let to: Vertex<T>
   
@@ -57,13 +65,119 @@ public struct Edge<T: Equatable>: Equatable {
     guard lhs.from == rhs.from else {
       return false
     }
-    
     guard lhs.to == rhs.to else {
       return false
     }
-    
     return true
   }
 }
 
+extension Edge: Hashable {
+  public var hashValue: Int {
+    get {
+      let stringHash = "\(from.index) -> \(to.index)"
+      return stringHash.hashValue
+    }
+  }
+}
 
+// 이웃 목록
+
+public struct VertexEdgesList<T: Equatable & Hashable> {
+  // 각각의 VertexEdgeList에 해당 꼭지점과 그에 연결된 또다른
+  // 꼭지점의 정보를 담고 있는 모서리 배열 데이터가 포함된다.
+  public let vertex: Vertex<T>
+  public var edges:[Edge<T>] = []
+  public init(vertex: Vertex<T>) {
+    self.vertex = vertex
+  }
+  
+  public mutating func addEdge(edge: Edge<T>) {
+    // Check if the edge exists
+    if self.edges.count > 0 {
+      let equalEdges = self.edges.filter {
+        existingEdge in
+        return existingEdge == edge
+      }
+      if equalEdges.count > 0 {
+        return
+      }
+    }
+    self.edges.append(edge)
+  }
+}
+
+public struct AdjacencyListGraph<T: Equatable & Hashable> {
+  public var adjacencyLists: [VertexEdgesList<T>] = []
+  public var vertices:[Vertex<T>] {
+    get  {
+      var vertices = [Vertex<T>]()
+      for list in adjacencyLists {
+        vertices.append(list.vertex)
+      }
+      return vertices
+    }
+  }
+  
+  public var edges:[Edge<T>] {
+    get {
+      var edges = Set<Edge<T>>()
+      for list in adjacencyLists {
+        for edge in list.edges {
+          edges.insert(edge)
+        }
+      }
+      return Array(edges)
+    }
+  }
+  public init() {}
+  
+  public mutating func addVertext(data: T) -> Vertex<T> {
+    // 꼭지점이 있는지 확인함
+    for list in adjacencyLists {
+      if list.vertex.data == data {
+        return list.vertex
+      }
+    }
+    // 꼭지점을 생성한 뒤 그래프를 업데이트하고 반환함
+    let vertex: Vertex<T> = Vertex(data: data, index: adjacencyLists.count)
+    let adjacencyList = VertexEdgesList(vertex: vertex)
+    adjacencyLists.append(adjacencyList)
+    return vertex
+  }
+  
+  public mutating func addEdge(from: Vertex<T>, to: Vertex<T>) -> Edge<T> {
+    let edge = Edge(from: from, to: to)
+    let list = adjacencyLists[from.index]
+    // 모서리가 있는지 확인함
+    if list.edges.count > 0 {
+      for existingEdge in list.edges {
+        if existingEdge == edge {
+          return existingEdge
+        }
+      }
+      adjacencyLists[from.index].edges.append(edge)
+    } else {
+      adjacencyLists[from.index].edges = [edge]
+    }
+    return edge
+  }
+}
+
+
+// 이웃 목록 그래프 생성
+var adjacencyList:AdjacencyListGraph<String> = AdjacencyListGraph<String>()
+
+// 꼭지점 추가
+let vertexA = adjacencyList.addVertext(data: "A")
+let vertexB = adjacencyList.addVertext(data: "B")
+let vertexC = adjacencyList.addVertext(data: "C")
+let vertexD = adjacencyList.addVertext(data: "D")
+
+// 모서리 추가
+let edgeAB = adjacencyList.addEdge(from: vertexA, to: vertexB)
+let edgeBC = adjacencyList.addEdge(from: vertexB, to: vertexC)
+let edgeCD = adjacencyList.addEdge(from: vertexC, to: vertexD)
+
+// 이웃 목록 출력
+print(adjacencyList)
