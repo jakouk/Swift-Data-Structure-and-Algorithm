@@ -16,8 +16,8 @@ public class BinaryTreeNode<T: Comparable> {
   
   public init(value: T, left: BinaryTreeNode?, right: BinaryTreeNode?, parent: BinaryTreeNode? ) {
     self.value = value
-    self.leftChild = leftChild
-    self.rightChild = rightChild
+    self.leftChild = left
+    self.rightChild = right
     self.parent = parent
   }
   
